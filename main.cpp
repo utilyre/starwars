@@ -1,6 +1,3 @@
-/**
- * Choose the right header for changing the color of console later
- */
 #ifdef _WIN32 // Windows
 #include <windows.h>
 #else // Unix-based systems
