@@ -1,6 +1,6 @@
-#ifdef _WIN32 // Windows
+#ifdef _WIN32
 #include <windows.h>
-#else // Unix-based systems
+#else
 #include <unistd.h>
 #endif
 
@@ -47,6 +47,16 @@ struct Game {
 };
 
 /**
+ * Clears the terminal screen.
+ */
+void clear();
+
+/**
+ * Sets current print color.
+ */
+void set_color(int color);
+
+/**
  * Returns a random number in range [a, b).
  */
 int rand_range(int a, int b);
@@ -73,11 +83,6 @@ bool contains_full_col(bool map[MAP_SIZE][MAP_SIZE]);
 Game init_game(bool map[MAP_SIZE][MAP_SIZE]);
 
 /**
- * Clears the terminal screen.
- */
-void clear();
-
-/**
  * Prints the state of game on the screen.
  */
 void render(const Game &game);
@@ -86,21 +91,6 @@ void render(const Game &game);
  * Handles user inputs infinitely until user quits.
  */
 void handle_input(Game &game);
-
-
-#ifdef _WIN32 // Windows
-
-void setConsoleColor(int color) {
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
-}
-
-#else // Unix-based systems
-
-void setConsoleColor(int color) {
-    cout << "\033[1;" << color << "m";
-}
-
-#endif
 
 int main() {
   srand(time(0));
@@ -114,7 +104,7 @@ int main() {
     if (game.health == 0) {
       clear();
 
-      setConsoleColor(4);
+      set_color(4);
 
       cout << " --------------------\n";
       cout << "|     YOU LOSE!      |\n";
@@ -130,7 +120,7 @@ int main() {
     if (game.num_enemies == 0) {
       clear();
 
-      setConsoleColor(9);
+      set_color(9);
 
       cout << " --------------------\n";
       cout << "|      YOU WON!      |\n";
@@ -145,6 +135,22 @@ int main() {
 
     handle_input(game);
   }
+}
+
+void clear() {
+#ifdef __linux__
+  system("clear");
+#else
+  system("cls");
+#endif
+}
+
+void set_color(int color) {
+#ifdef _WIN32
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+#else
+    cout << "\033[1;" << color << "m";
+#endif
 }
 
 int rand_range(int a, int b) { return rand() % (b - a) + a; }
@@ -223,20 +229,12 @@ Game init_game(bool map[MAP_SIZE][MAP_SIZE]) {
   return game;
 }
 
-void clear() {
-#ifdef __linux__
-  system("clear");
-#else
-  system("cls");
-#endif
-}
-
 void render(const Game &game) {
   clear();
 
   cout << "health: " << game.health << "\n\n";
 
-  setConsoleColor(9);
+  set_color(9);
 
   for (int ifor = 0; ifor < 2 * MAP_SIZE; ++ifor) {
     if (ifor % 2 == 0) {
@@ -254,15 +252,15 @@ void render(const Game &game) {
       cout << "|";
       char ch = ' ';
       if (game.spaceship.y == i && game.spaceship.x == j) {
-        setConsoleColor(6);
+        set_color(6);
         ch = 'O';
       } else if (game.map[i][j]) {
-        setConsoleColor(4);
+        set_color(4);
         ch = '*';
       }
 
       cout << " " << ch << " ";
-      setConsoleColor(9);
+      set_color(9);
     }
 
     cout << "|" << endl;
@@ -273,7 +271,7 @@ void render(const Game &game) {
   }
   cout << endl;
 
-  setConsoleColor(15);
+  set_color(15);
 }
 
 void handle_input(Game &game) {
@@ -342,9 +340,9 @@ void handle_input(Game &game) {
     case 'Q':
       exit(0);
     default:
-      setConsoleColor(4);
+      set_color(4);
       cout << endl << "error: invalid input\n\n";
-      setConsoleColor(15);
+      set_color(15);
     }
   }
 }
