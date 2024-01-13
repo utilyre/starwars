@@ -4,11 +4,11 @@
 #include <unistd.h>
 #endif
 
+#include <conio.h>
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
 #include <vector>
-#include <conio.h>
 
 using namespace std;
 
@@ -105,7 +105,6 @@ int main() {
       clear();
 
       set_color(4);
-
       cout << " --------------------\n";
       cout << "|     YOU LOSE!      |\n";
       cout << "|  Better luck next  |\n";
@@ -121,7 +120,6 @@ int main() {
       clear();
 
       set_color(9);
-
       cout << " --------------------\n";
       cout << "|      YOU WON!      |\n";
       cout << "|  Congratulations!  |\n";
@@ -147,9 +145,9 @@ void clear() {
 
 void set_color(int color) {
 #ifdef _WIN32
-    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+  SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
 #else
-    cout << "\033[1;" << color << "m";
+  cout << "\033[1;" << color << "m";
 #endif
 }
 
@@ -235,7 +233,6 @@ void render(const Game &game) {
   cout << "health: " << game.health << "\n\n";
 
   set_color(9);
-
   for (int ifor = 0; ifor < 2 * MAP_SIZE; ++ifor) {
     if (ifor % 2 == 0) {
       for (int j = 0; j < MAP_SIZE; ++j) {
@@ -248,7 +245,6 @@ void render(const Game &game) {
 
     int i = ifor / 2;
     for (int j = 0; j < MAP_SIZE; ++j) {
-      
       cout << "|";
       char ch = ' ';
       if (game.spaceship.y == i && game.spaceship.x == j) {
@@ -275,8 +271,6 @@ void render(const Game &game) {
 }
 
 void handle_input(Game &game) {
-  
-
   while (true) {
     unsigned char key;
     cout << endl << "A : fire to right side, D : fire to left side ";
@@ -285,56 +279,56 @@ void handle_input(Game &game) {
 
     switch (key) {
     case 224: {
-        int dir;
-        dir = _getch();
+      int dir;
+      dir = _getch();
 
-        switch (dir) {
-        case 72:
-            if (game.spaceship.y > 0)
-                --game.spaceship.y;
-            break;
-        case 75:
-            if (game.spaceship.x > 0)
-                --game.spaceship.x;
-            break;
-        case 80:
-            if (game.spaceship.y < MAP_SIZE - 1)
-                ++game.spaceship.y;
-            break;
-        case 77:
-            if (game.spaceship.x < MAP_SIZE - 1)
-                ++game.spaceship.x;
-            break;
-        }
+      switch (dir) {
+      case 72:
+        if (game.spaceship.y > 0)
+          --game.spaceship.y;
+        break;
+      case 75:
+        if (game.spaceship.x > 0)
+          --game.spaceship.x;
+        break;
+      case 80:
+        if (game.spaceship.y < MAP_SIZE - 1)
+          ++game.spaceship.y;
+        break;
+      case 77:
+        if (game.spaceship.x < MAP_SIZE - 1)
+          ++game.spaceship.x;
+        break;
+      }
 
-        if (game.map[game.spaceship.y][game.spaceship.x]) {
-            --game.health;
-            game.spaceship = game.spaceship_init;
-        }
+      if (game.map[game.spaceship.y][game.spaceship.x]) {
+        --game.health;
+        game.spaceship = game.spaceship_init;
+      }
 
-        return;
+      return;
     }
     case 'a':
     case 'A': {
-        for (int j = game.spaceship.x - 1; j >= 0; --j) {
-            if (game.map[game.spaceship.y][j]) {
-                game.map[game.spaceship.y][j] = false;
-                --game.num_enemies;
-                break;
-            }
+      for (int j = game.spaceship.x - 1; j >= 0; --j) {
+        if (game.map[game.spaceship.y][j]) {
+          game.map[game.spaceship.y][j] = false;
+          --game.num_enemies;
+          break;
         }
-        return;
+      }
+      return;
     }
     case 'd':
     case 'D': {
-        for (int j = game.spaceship.x + 1; j < MAP_SIZE; ++j) {
-            if (game.map[game.spaceship.y][j]) {
-                game.map[game.spaceship.y][j] = false;
-                --game.num_enemies;
-                break;
-            }
+      for (int j = game.spaceship.x + 1; j < MAP_SIZE; ++j) {
+        if (game.map[game.spaceship.y][j]) {
+          game.map[game.spaceship.y][j] = false;
+          --game.num_enemies;
+          break;
         }
-        return;
+      }
+      return;
     }
     case 'q':
     case 'Q':
